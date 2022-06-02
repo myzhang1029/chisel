@@ -19,14 +19,20 @@ func (s *Server) handleClientHandler(w http.ResponseWriter, r *http.Request) {
 	//websockets upgrade AND has chisel prefix
 	upgrade := strings.ToLower(r.Header.Get("Upgrade"))
 	protocol := r.Header.Get("Sec-WebSocket-Protocol")
-	if upgrade == "websocket"  {
-		if protocol == chshare.ProtocolVersion {
-			s.handleWebsocket(w, r)
-			return
+	wsPSK := r.Header.Get("X-Chisel-PSK")
+	if upgrade == "websocket" && strings.HasPrefix(protocol, "chisel-") {
+		if s.config.PSK == "" || wsPSK == s.config.PSK {
+			if protocol == chshare.ProtocolVersion {
+				s.handleWebsocket(w, r)
+				return
+			}
+			//print into server logs and silently fall-through
+			s.Infof("Ignoring client connection using protocol '%s', expected '%s'",
+				protocol, chshare.ProtocolVersion)
+		} else {
+			s.Infof("Ignoring client connection with incorrect or missing PSK '%s'",
+				wsPSK)
 		}
-		//print into server logs and silently fall-through
-		s.Infof("ignored client connection using protocol '%s', expected '%s'",
-			protocol, chshare.ProtocolVersion)
 	}
 	//proxy target was provided
 	if s.reverseProxy != nil {

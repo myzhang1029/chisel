@@ -144,10 +144,14 @@ var serverHelp = `
 
     --obfs, Try harder to hide from Active Probes (disable /health and
     /version endpoints and HTTP headers that could potentially be used
-    to fingerprint chisel).
+    to fingerprint chisel). It is strongly recommended to use --ws-psk
+	and TLS.
 
-    --404-resp, Content to send with a 404 response. Defaults to
-    'Not found'.
+    --404-resp, Content to send with a 404 response. Defaults to 'Not found'.
+
+    --ws-psk, An optional Pre-Shared Key for WebSocket upgrade. If this
+    option is supplied but the client does not present the correct key
+    in the HTTP header X-Chisel-PDK, the upgrade to WebSocket silently fails.
 
     --tls-key, Enables TLS and provides optional path to a PEM-encoded
     TLS private key. When this flag is set, you must also set --tls-cert,
@@ -186,6 +190,7 @@ func server(args []string) {
 	flags.BoolVar(&config.Reverse, "reverse", false, "")
 	flags.BoolVar(&config.Obfs, "obfs", false, "")
 	flags.StringVar(&config.Resp404, "404-resp", "Not found", "")
+	flags.StringVar(&config.PSK, "ws-psk", "", "")
 	flags.StringVar(&config.TLS.Key, "tls-key", "", "")
 	flags.StringVar(&config.TLS.Cert, "tls-cert", "", "")
 	flags.Var(multiFlag{&config.TLS.Domains}, "tls-domain", "")
@@ -351,6 +356,11 @@ var clientHelp = `
     the credentials inside the server's --authfile. defaults to the
     AUTH environment variable.
 
+    --ws-psk, An optional Pre-Shared Key for WebSocket upgrade to present
+    to the server in the HTTP header X-Chisel-PSK. If the server requires
+    this key but the client does not present the correct key, the upgrade
+    to WebSocket silently fails.
+
     --keepalive, An optional keepalive interval. Since the underlying
     transport is HTTP, in many instances we'll be traversing through
     proxies, often these proxies will close idle connections. You must
@@ -403,6 +413,7 @@ func client(args []string) {
 	config := chclient.Config{Headers: http.Header{}}
 	flags.StringVar(&config.Fingerprint, "fingerprint", "", "")
 	flags.StringVar(&config.Auth, "auth", "", "")
+	psk := flags.String("ws-psk", "", "")
 	flags.DurationVar(&config.KeepAlive, "keepalive", 25*time.Second, "")
 	flags.IntVar(&config.MaxRetryCount, "max-retry-count", -1, "")
 	flags.DurationVar(&config.MaxRetryInterval, "max-retry-interval", 0, "")
@@ -431,6 +442,10 @@ func client(args []string) {
 	//default auth
 	if config.Auth == "" {
 		config.Auth = os.Getenv("AUTH")
+	}
+	//set X-Chisel-PSK to the supplied PSK
+	if *psk != "" {
+		config.Headers.Set("X-Chisel-PSK", *psk)
 	}
 	//move hostname onto headers
 	if *hostname != "" {
