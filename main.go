@@ -142,6 +142,13 @@ var serverHelp = `
     --reverse, Allow clients to specify reverse port forwarding remotes
     in addition to normal remotes.
 
+    --obfs, Try harder to hide from Active Probes (disable /health and
+    /version endpoints and HTTP headers that could potentially be used
+    to fingerprint chisel).
+
+    --404-resp, Content to send with a 404 response. Defaults to
+    'Not found'.
+
     --tls-key, Enables TLS and provides optional path to a PEM-encoded
     TLS private key. When this flag is set, you must also set --tls-cert,
     and you cannot set --tls-domain.
@@ -177,6 +184,8 @@ func server(args []string) {
 	flags.StringVar(&config.Proxy, "backend", "", "")
 	flags.BoolVar(&config.Socks5, "socks5", false, "")
 	flags.BoolVar(&config.Reverse, "reverse", false, "")
+	flags.BoolVar(&config.Obfs, "obfs", false, "")
+	flags.StringVar(&config.Resp404, "404-resp", "Not found", "")
 	flags.StringVar(&config.TLS.Key, "tls-key", "", "")
 	flags.StringVar(&config.TLS.Cert, "tls-cert", "", "")
 	flags.Var(multiFlag{&config.TLS.Domains}, "tls-domain", "")

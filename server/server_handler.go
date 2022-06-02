@@ -33,18 +33,20 @@ func (s *Server) handleClientHandler(w http.ResponseWriter, r *http.Request) {
 		s.reverseProxy.ServeHTTP(w, r)
 		return
 	}
-	//no proxy defined, provide access to health/version checks
-	switch r.URL.Path {
-	case "/health":
-		w.Write([]byte("OK\n"))
-		return
-	case "/version":
-		w.Write([]byte(chshare.BuildVersion))
-		return
+	if s.config.Obfs == false {
+		//no proxy defined, provide access to health/version checks
+		switch r.URL.Path {
+		case "/health":
+			w.Write([]byte("OK\n"))
+			return
+		case "/version":
+			w.Write([]byte(chshare.BuildVersion))
+			return
+		}
 	}
 	//missing :O
 	w.WriteHeader(404)
-	w.Write([]byte("Not found"))
+	w.Write([]byte(s.config.Resp404))
 }
 
 // handleWebsocket is responsible for handling the websocket connection

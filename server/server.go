@@ -26,8 +26,10 @@ type Config struct {
 	AuthFile  string
 	Auth      string
 	Proxy     string
+	Resp404   string
 	Socks5    bool
 	Reverse   bool
+	Obfs      bool
 	KeepAlive time.Duration
 	TLS       TLSConfig
 }
