@@ -178,7 +178,7 @@ func (u *udpListener) getUDPChan(ctx context.Context) (*udpChannel, error) {
 		c: rwc,
 	}
 	u.outbound = o
-	u.Debugf("aquired channel")
+	u.Debugf("acquired channel")
 	return o, nil
 }
 

@@ -52,6 +52,7 @@ func (s *Server) listener(host, port string) (net.Listener, error) {
 	proto := "http"
 	if tlsConf != nil {
 		proto += "s"
+		tlsConf.MinVersion = 0x0301 + (12 - 10) // Force TLSv1.2 minimum
 		l = tls.NewListener(l, tlsConf)
 	}
 	if err == nil {
