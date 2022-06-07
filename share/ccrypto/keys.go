@@ -25,7 +25,7 @@ func GenerateKey(seed string) ([]byte, error) {
 	}
 	b, err := x509.MarshalECPrivateKey(priv)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to marshal ECDSA private key: %v", err)
+		return nil, fmt.Errorf("unable to marshal ECDSA private key: %v", err)
 	}
 	return pem.EncodeToMemory(&pem.Block{Type: "EC PRIVATE KEY", Bytes: b}), nil
 }

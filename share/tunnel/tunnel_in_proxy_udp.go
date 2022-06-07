@@ -64,7 +64,7 @@ type udpListener struct {
 
 func (u *udpListener) run(ctx context.Context) error {
 	defer u.inbound.Close()
-	//udp doesnt accept connections,
+	//udp doesn't accept connections,
 	//udp simply forwards packets
 	//and therefore only needs to listen
 	eg, ctx := errgroup.WithContext(ctx)
@@ -78,7 +78,7 @@ func (u *udpListener) run(ctx context.Context) error {
 		u.Debugf("listen: %s", err)
 		return err
 	}
-	u.Debugf("Close (sent %s received %s)", sizestr.ToString(u.sent), sizestr.ToString(u.recv))
+	u.Debugf("close (sent %s received %s)", sizestr.ToString(u.sent), sizestr.ToString(u.recv))
 	return nil
 }
 

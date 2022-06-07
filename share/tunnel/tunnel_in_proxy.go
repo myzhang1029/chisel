@@ -54,14 +54,14 @@ func (p *Proxy) listen() error {
 		if err != nil {
 			return p.Errorf("tcp: %s", err)
 		}
-		p.Infof("Listening")
+		p.Infof("listening")
 		p.tcp = l
 	} else if p.remote.LocalProto == "udp" {
 		l, err := listenUDP(p.Logger, p.sshTun, p.remote)
 		if err != nil {
 			return err
 		}
-		p.Infof("Listening")
+		p.Infof("listening")
 		p.udp = l
 	} else {
 		return p.Errorf("unknown local proto")
@@ -83,7 +83,7 @@ func (p *Proxy) Run(ctx context.Context) error {
 }
 
 func (p *Proxy) runStdio(ctx context.Context) error {
-	defer p.Infof("Closed")
+	defer p.Infof("closed")
 	for {
 		p.pipeRemote(ctx, cio.Stdio)
 		select {
@@ -113,7 +113,7 @@ func (p *Proxy) runTCP(ctx context.Context) error {
 				//listener closed
 				err = nil
 			default:
-				p.Infof("Accept error: %s", err)
+				p.Infof("accept error: %s", err)
 			}
 			close(done)
 			return err
@@ -131,20 +131,20 @@ func (p *Proxy) pipeRemote(ctx context.Context, src io.ReadWriteCloser) {
 	p.mu.Unlock()
 
 	l := p.Fork("conn#%d", cid)
-	l.Debugf("Open")
+	l.Debugf("open")
 	sshConn := p.sshTun.getSSH(ctx)
 	if sshConn == nil {
-		l.Debugf("No remote connection")
+		l.Debugf("no remote connection")
 		return
 	}
 	//ssh request for tcp connection for this proxy's remote
 	dst, reqs, err := sshConn.OpenChannel("penguin", []byte(p.remote.Remote()))
 	if err != nil {
-		l.Infof("Stream error: %s", err)
+		l.Infof("stream error: %s", err)
 		return
 	}
 	go ssh.DiscardRequests(reqs)
 	//then pipe
 	s, r := cio.Pipe(src, dst)
-	l.Debugf("Close (sent %s received %s)", sizestr.ToString(s), sizestr.ToString(r))
+	l.Debugf("close (sent %s received %s)", sizestr.ToString(s), sizestr.ToString(r))
 }

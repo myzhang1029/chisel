@@ -79,12 +79,12 @@ func NewServer(c *Config) (*Server, error) {
 	//generate private key (optionally using seed)
 	key, err := ccrypto.GenerateKey(c.KeySeed)
 	if err != nil {
-		log.Fatal("Failed to generate key")
+		log.Fatal("failed to generate key")
 	}
 	//convert into ssh.PrivateKey
 	private, err := ssh.ParsePrivateKey(key)
 	if err != nil {
-		log.Fatal("Failed to parse key")
+		log.Fatal("failed to parse key")
 	}
 	//fingerprint this key
 	server.fingerprint = ccrypto.FingerprintKey(private.PublicKey())
@@ -101,7 +101,7 @@ func NewServer(c *Config) (*Server, error) {
 			return nil, err
 		}
 		if u.Host == "" {
-			return nil, server.Errorf("Missing protocol (%s)", u)
+			return nil, server.Errorf("missing protocol (%s)", u)
 		}
 		server.reverseProxy = httputil.NewSingleHostReverseProxy(u)
 		//always use proxy host
@@ -112,9 +112,9 @@ func NewServer(c *Config) (*Server, error) {
 			r.Host = u.Host
 		}
 	}
-	//print when reverse tunnelling is enabled
+	//print when reverse tunneling is enabled
 	if c.Reverse {
-		server.Infof("Reverse tunnelling enabled")
+		server.Infof("reverse tunneling enabled")
 	}
 	return server, nil
 }
@@ -136,12 +136,12 @@ func (s *Server) Start(host, port string) error {
 // StartContext is responsible for kicking off the http server,
 // and can be closed by cancelling the provided context
 func (s *Server) StartContext(ctx context.Context, host, port string) error {
-	s.Infof("Fingerprint %s", s.fingerprint)
+	s.Infof("fingerprint %s", s.fingerprint)
 	if s.users.Len() > 0 {
-		s.Infof("User authentication enabled")
+		s.Infof("user authentication enabled")
 	}
 	if s.reverseProxy != nil {
-		s.Infof("Reverse proxy enabled")
+		s.Infof("reverse proxy enabled")
 	}
 	l, err := s.listener(host, port)
 	if err != nil {
@@ -181,8 +181,8 @@ func (s *Server) authUser(c ssh.ConnMetadata, password []byte) (*ssh.Permissions
 	n := c.User()
 	user, found := s.users.Get(n)
 	if !found || user.Pass != string(password) {
-		s.Debugf("Login failed for user: %s", n)
-		return nil, errors.New("Invalid authentication for username: %s")
+		s.Debugf("login failed for user: %s", n)
+		return nil, errors.New("invalid authentication for username: %s")
 	}
 	// insert the user session map
 	// TODO this should probably have a lock on it given the map isn't thread-safe

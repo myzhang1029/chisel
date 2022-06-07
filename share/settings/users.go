@@ -86,7 +86,7 @@ func NewUserIndex(logger *cio.Logger) *UserIndex {
 // LoadUsers is responsible for loading users from a file
 func (u *UserIndex) LoadUsers(configFile string) error {
 	u.configFile = configFile
-	u.Infof("Loading configuration file %s", configFile)
+	u.Infof("loading configuration file %s", configFile)
 	if err := u.loadUserIndex(); err != nil {
 		return err
 	}
@@ -111,9 +111,9 @@ func (u *UserIndex) addWatchEvents() error {
 				continue
 			}
 			if err := u.loadUserIndex(); err != nil {
-				u.Infof("Failed to reload the users configuration: %s", err)
+				u.Infof("failed to reload the users configuration: %s", err)
 			} else {
-				u.Debugf("Users configuration successfully reloaded from: %s", u.configFile)
+				u.Debugf("users configuration successfully reloaded from: %s", u.configFile)
 			}
 		}
 	}()
@@ -127,18 +127,18 @@ func (u *UserIndex) loadUserIndex() error {
 	}
 	b, err := ioutil.ReadFile(u.configFile)
 	if err != nil {
-		return fmt.Errorf("Failed to read auth file: %s, error: %s", u.configFile, err)
+		return fmt.Errorf("failed to read auth file: %s, error: %s", u.configFile, err)
 	}
 	var raw map[string][]string
 	if err := json.Unmarshal(b, &raw); err != nil {
-		return errors.New("Invalid JSON: " + err.Error())
+		return errors.New("invalid JSON: " + err.Error())
 	}
 	users := []*User{}
 	for auth, remotes := range raw {
 		user := &User{}
 		user.Name, user.Pass = ParseAuth(auth)
 		if user.Name == "" {
-			return errors.New("Invalid user:pass string")
+			return errors.New("invalid user:pass string")
 		}
 		for _, r := range remotes {
 			if r == "" || r == "*" {
@@ -146,7 +146,7 @@ func (u *UserIndex) loadUserIndex() error {
 			} else {
 				re, err := regexp.Compile(r)
 				if err != nil {
-					return errors.New("Invalid address regex")
+					return errors.New("invalid address regex")
 				}
 				user.Addrs = append(user.Addrs, re)
 			}

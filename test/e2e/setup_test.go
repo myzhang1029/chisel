@@ -66,7 +66,7 @@ func (tl *testLayout) setup(t *testing.T) (server *chserver.Server, client *chcl
 	}
 	go func() {
 		server.Wait()
-		server.Infof("Closed")
+		server.Infof("closed")
 		cancel()
 	}()
 	//client (with defaults)
@@ -93,7 +93,7 @@ func (tl *testLayout) setup(t *testing.T) (server *chserver.Server, client *chcl
 	}
 	go func() {
 		client.Wait()
-		client.Infof("Closed")
+		client.Infof("closed")
 		cancel()
 	}()
 	//cancel context tree, and wait for both client and server to stop

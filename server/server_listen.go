@@ -56,7 +56,7 @@ func (s *Server) listener(host, port string) (net.Listener, error) {
 		l = tls.NewListener(l, tlsConf)
 	}
 	if err == nil {
-		s.Infof("Listening on %s://%s:%s%s", proto, host, port, extra)
+		s.Infof("listening on %s://%s:%s%s", proto, host, port, extra)
 	}
 	return l, nil
 }
@@ -65,7 +65,7 @@ func (s *Server) tlsLetsEncrypt(domains []string) *tls.Config {
 	//prepare cert manager
 	m := &autocert.Manager{
 		Prompt: func(tosURL string) bool {
-			s.Infof("Accepting LetsEncrypt TOS and fetching certificate...")
+			s.Infof("accepting LetsEncrypt TOS and fetching certificate...")
 			return true
 		},
 		Email:      settings.Env("LE_EMAIL"),
@@ -83,7 +83,7 @@ func (s *Server) tlsLetsEncrypt(domains []string) *tls.Config {
 		c = filepath.Join(h, ".cache", "penguin")
 	}
 	if c != "-" {
-		s.Infof("LetsEncrypt cache directory %s", c)
+		s.Infof("Let's Encrypt cache directory %s", c)
 		m.Cache = autocert.DirCache(c)
 	}
 	//return lets-encrypt tls config
@@ -104,7 +104,7 @@ func (s *Server) tlsKeyCert(key, cert string, ca string) (*tls.Config, error) {
 		if err := addCA(ca, c); err != nil {
 			return nil, err
 		}
-		s.Infof("Loaded CA path: %s", ca)
+		s.Infof("loaded CA path: %s", ca)
 	}
 	return c, nil
 }
@@ -146,7 +146,7 @@ func addPEMFile(path string, pool *x509.CertPool) error {
 		return err
 	}
 	if !pool.AppendCertsFromPEM(content) {
-		return errors.New("Fail to load certificates from : " + path)
+		return errors.New("fail to load certificates from : " + path)
 	}
 	return nil
 }

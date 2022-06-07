@@ -119,9 +119,9 @@ func NewClient(c *Config) (*Client, error) {
 		} else if c.TLS.CA != "" {
 			rootCAs := x509.NewCertPool()
 			if b, err := ioutil.ReadFile(c.TLS.CA); err != nil {
-				return nil, fmt.Errorf("Failed to load file: %s", c.TLS.CA)
+				return nil, fmt.Errorf("failed to load file: %s", c.TLS.CA)
 			} else if ok := rootCAs.AppendCertsFromPEM(b); !ok {
-				return nil, fmt.Errorf("Failed to decode PEM: %s", c.TLS.CA)
+				return nil, fmt.Errorf("failed to decode PEM: %s", c.TLS.CA)
 			} else {
 				client.Infof("TLS verification using CA %s", c.TLS.CA)
 				tc.RootCAs = rootCAs
@@ -131,11 +131,11 @@ func NewClient(c *Config) (*Client, error) {
 		if c.TLS.Cert != "" && c.TLS.Key != "" {
 			c, err := tls.LoadX509KeyPair(c.TLS.Cert, c.TLS.Key)
 			if err != nil {
-				return nil, fmt.Errorf("Error loading client cert and key pair: %v", err)
+				return nil, fmt.Errorf("error loading client cert and key pair: %v", err)
 			}
 			tc.Certificates = []tls.Certificate{c}
 		} else if c.TLS.Cert != "" || c.TLS.Key != "" {
-			return nil, fmt.Errorf("Please specify client BOTH cert and key")
+			return nil, fmt.Errorf("please specify client BOTH cert and key")
 		}
 		client.tlsConfig = tc
 	}
@@ -143,7 +143,7 @@ func NewClient(c *Config) (*Client, error) {
 	for _, s := range c.Remotes {
 		r, err := settings.DecodeRemote(s)
 		if err != nil {
-			return nil, fmt.Errorf("Failed to decode remote '%s': %s", s, err)
+			return nil, fmt.Errorf("failed to decode remote '%s': %s", s, err)
 		}
 		if r.Socks {
 			hasSocks = true
@@ -153,13 +153,13 @@ func NewClient(c *Config) (*Client, error) {
 		}
 		if r.Stdio {
 			if hasStdio {
-				return nil, errors.New("Only one stdio is allowed")
+				return nil, errors.New("only one stdio is allowed")
 			}
 			hasStdio = true
 		}
 		//confirm non-reverse tunnel is available
 		if !r.Reverse && !r.Stdio && !r.CanListen() {
-			return nil, fmt.Errorf("Client cannot listen on %s", r.String())
+			return nil, fmt.Errorf("client cannot listen on %s", r.String())
 		}
 		client.computed.Remotes = append(client.computed.Remotes, r)
 	}
@@ -167,7 +167,7 @@ func NewClient(c *Config) (*Client, error) {
 	if p := c.Proxy; p != "" {
 		client.proxyURL, err = url.Parse(p)
 		if err != nil {
-			return nil, fmt.Errorf("Invalid proxy URL (%s)", err)
+			return nil, fmt.Errorf("invalid proxy URL (%s)", err)
 		}
 	}
 	//ssh auth and config
@@ -208,16 +208,16 @@ func (c *Client) verifyServer(hostname string, remote net.Addr, key ssh.PublicKe
 	got := ccrypto.FingerprintKey(key)
 	_, err := base64.StdEncoding.DecodeString(expect)
 	if _, ok := err.(base64.CorruptInputError); ok {
-		c.Logger.Infof("Specified deprecated MD5 fingerprint (%s), please update to the new SHA256 fingerprint: %s", expect, got)
+		c.Logger.Infof("specified deprecated MD5 fingerprint (%s), please update to the new SHA256 fingerprint: %s", expect, got)
 		return c.verifyLegacyFingerprint(key)
 	} else if err != nil {
-		return fmt.Errorf("Error decoding fingerprint: %w", err)
+		return fmt.Errorf("error decoding fingerprint: %w", err)
 	}
 	if got != expect {
-		return fmt.Errorf("Invalid fingerprint (%s)", got)
+		return fmt.Errorf("invalid fingerprint (%s)", got)
 	}
 	//overwrite with complete fingerprint
-	c.Infof("Fingerprint %s", got)
+	c.Infof("fingerprint %s", got)
 	return nil
 }
 
@@ -231,7 +231,7 @@ func (c *Client) verifyLegacyFingerprint(key ssh.PublicKey) error {
 	got := strings.Join(strbytes, ":")
 	expect := c.config.Fingerprint
 	if !strings.HasPrefix(got, expect) {
-		return fmt.Errorf("Invalid fingerprint (%s)", got)
+		return fmt.Errorf("invalid fingerprint (%s)", got)
 	}
 	return nil
 }
@@ -246,7 +246,7 @@ func (c *Client) Start(ctx context.Context) error {
 	if c.proxyURL != nil {
 		via = " via " + c.proxyURL.String()
 	}
-	c.Infof("Connecting to %s%s\n", c.server, via)
+	c.Infof("connecting to %s%s\n", c.server, via)
 	//connect to penguin server
 	eg.Go(func() error {
 		return c.connectionLoop(ctx)

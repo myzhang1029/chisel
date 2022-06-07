@@ -27,10 +27,10 @@ func (s *Server) handleClientHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			//print into server logs and silently fall-through
-			s.Infof("Ignoring client connection using protocol '%s', expected '%s'",
+			s.Infof("ignoring client connection using protocol '%s', expected '%s'",
 				protocol, chshare.ProtocolVersion)
 		} else {
-			s.Infof("Ignoring client connection with incorrect or missing PSK '%s'",
+			s.Infof("ignoring client connection with incorrect or missing PSK '%s'",
 				wsPSK)
 		}
 	}
@@ -39,7 +39,7 @@ func (s *Server) handleClientHandler(w http.ResponseWriter, r *http.Request) {
 		s.reverseProxy.ServeHTTP(w, r)
 		return
 	}
-	if s.config.Obfs == false {
+	if !s.config.Obfs {
 		//no proxy defined, provide access to health/version checks
 		switch r.URL.Path {
 		case "/health":
@@ -61,15 +61,15 @@ func (s *Server) handleWebsocket(w http.ResponseWriter, req *http.Request) {
 	l := s.Fork("session#%d", id)
 	wsConn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
-		l.Debugf("Failed to upgrade (%s)", err)
+		l.Debugf("failed to upgrade (%s)", err)
 		return
 	}
 	conn := cnet.NewWebSocketConn(wsConn)
 	// perform SSH handshake on net.Conn
-	l.Debugf("Handshaking with %s...", req.RemoteAddr)
+	l.Debugf("handshaking with %s...", req.RemoteAddr)
 	sshConn, chans, reqs, err := ssh.NewServerConn(conn, s.sshConfig)
 	if err != nil {
-		s.Debugf("Failed to handshake (%s)", err)
+		s.Debugf("failed to handshake (%s)", err)
 		return
 	}
 	// pull the users from the session map
@@ -85,18 +85,18 @@ func (s *Server) handleWebsocket(w http.ResponseWriter, req *http.Request) {
 	}
 	// penguin server handshake (reverse of client handshake)
 	// verify configuration
-	l.Debugf("Verifying configuration")
+	l.Debugf("verifying configuration")
 	// wait for request, with timeout
 	var r *ssh.Request
 	select {
 	case r = <-reqs:
 	case <-time.After(settings.EnvDuration("CONFIG_TIMEOUT", 10*time.Second)):
-		l.Debugf("Timeout waiting for configuration")
+		l.Debugf("timeout waiting for configuration")
 		sshConn.Close()
 		return
 	}
 	failed := func(err error) {
-		l.Debugf("Failed: %s", err)
+		l.Debugf("failed: %s", err)
 		r.Reply(false, []byte(err.Error()))
 	}
 	if r.Type != "config" {
@@ -108,13 +108,13 @@ func (s *Server) handleWebsocket(w http.ResponseWriter, req *http.Request) {
 		failed(s.Errorf("invalid config"))
 		return
 	}
-	//print if client and server  versions dont match
+	//print if client and server versions dont match
 	if c.Version != chshare.BuildVersion {
 		v := c.Version
 		if v == "" {
 			v = "<unknown>"
 		}
-		l.Infof("Client version (%s) differs from server version (%s)",
+		l.Infof("client version (%s) differs from server version (%s)",
 			v, chshare.BuildVersion)
 	}
 	//validate remotes
@@ -130,13 +130,13 @@ func (s *Server) handleWebsocket(w http.ResponseWriter, req *http.Request) {
 		}
 		//confirm reverse tunnels are allowed
 		if r.Reverse && !s.config.Reverse {
-			l.Debugf("Denied reverse port forwarding request, please enable --reverse")
-			failed(s.Errorf("Reverse port forwarding not enabled on server"))
+			l.Debugf("denied reverse port forwarding request, please enable --reverse")
+			failed(s.Errorf("reverse port forwarding not enabled on server"))
 			return
 		}
 		//confirm reverse tunnel is available
 		if r.Reverse && !r.CanListen() {
-			failed(s.Errorf("Server cannot listen on %s", r.String()))
+			failed(s.Errorf("server cannot listen on %s", r.String()))
 			return
 		}
 	}
@@ -167,8 +167,8 @@ func (s *Server) handleWebsocket(w http.ResponseWriter, req *http.Request) {
 	})
 	err = eg.Wait()
 	if err != nil && !strings.HasSuffix(err.Error(), "EOF") {
-		l.Debugf("Closed connection (%s)", err)
+		l.Debugf("closed connection (%s)", err)
 	} else {
-		l.Debugf("Closed connection")
+		l.Debugf("closed connection")
 	}
 }

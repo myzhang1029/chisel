@@ -272,7 +272,7 @@ func (flag *headerFlags) String() string {
 func (flag *headerFlags) Set(arg string) error {
 	index := strings.Index(arg, ":")
 	if index < 0 {
-		return fmt.Errorf(`Invalid header (%s). Should be in the format "HeaderName: HeaderContent"`, arg)
+		return fmt.Errorf(`invalid header (%s). Should be in the format "HeaderName: HeaderContent"`, arg)
 	}
 	if flag.Header == nil {
 		flag.Header = http.Header{}
@@ -435,7 +435,7 @@ func client(args []string) {
 	//pull out options, put back remaining args
 	args = flags.Args()
 	if len(args) < 2 {
-		log.Fatalf("A server and least one remote is required")
+		log.Fatalf("a server and least one remote is required")
 	}
 	config.Server = args[0]
 	config.Remotes = args[1:]

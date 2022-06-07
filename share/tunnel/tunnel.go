@@ -64,7 +64,7 @@ func New(c Config) *Tunnel {
 		t.socksServer, _ = socks5.New(&socks5.Config{Logger: sl})
 		extra += " (SOCKS enabled)"
 	}
-	t.Debugf("Created%s", extra)
+	t.Debugf("created%s", extra)
 	return t
 }
 
@@ -166,9 +166,9 @@ func (t *Tunnel) BindRemotes(ctx context.Context, remotes []*settings.Remote) er
 			return p.Run(ctx)
 		})
 	}
-	t.Debugf("Bound proxies")
+	t.Debugf("bound proxies")
 	err := eg.Wait()
-	t.Debugf("Unbound proxies")
+	t.Debugf("unbound proxies")
 	return err
 }
 

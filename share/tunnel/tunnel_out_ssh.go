@@ -19,7 +19,7 @@ func (t *Tunnel) handleSSHRequests(reqs <-chan *ssh.Request) {
 		case "ping":
 			r.Reply(true, []byte("pong"))
 		default:
-			t.Debugf("Unknown request: %s", r.Type)
+			t.Debugf("unknown request: %s", r.Type)
 		}
 	}
 }
@@ -32,7 +32,7 @@ func (t *Tunnel) handleSSHChannels(chans <-chan ssh.NewChannel) {
 
 func (t *Tunnel) handleSSHChannel(ch ssh.NewChannel) {
 	if !t.Config.Outbound {
-		t.Debugf("Denied outbound connection")
+		t.Debugf("denied outbound connection")
 		ch.Reject(ssh.Prohibited, "Denied outbound connection")
 		return
 	}
@@ -42,13 +42,13 @@ func (t *Tunnel) handleSSHChannel(ch ssh.NewChannel) {
 	udp := proto == "udp"
 	socks := hostPort == "socks"
 	if socks && t.socksServer == nil {
-		t.Debugf("Denied socks request, please enable socks")
+		t.Debugf("denied socks request, please enable socks")
 		ch.Reject(ssh.Prohibited, "SOCKS5 is not enabled")
 		return
 	}
 	sshChan, reqs, err := ch.Accept()
 	if err != nil {
-		t.Debugf("Failed to accept stream: %s", err)
+		t.Debugf("failed to accept stream: %s", err)
 		return
 	}
 	stream := io.ReadWriteCloser(sshChan)
@@ -58,7 +58,7 @@ func (t *Tunnel) handleSSHChannel(ch ssh.NewChannel) {
 	l := t.Logger.Fork("conn#%d", t.connStats.New())
 	//ready to handle
 	t.connStats.Open()
-	l.Debugf("Open %s", t.connStats.String())
+	l.Debugf("open %s", t.connStats.String())
 	if socks {
 		err = t.handleSocks(stream)
 	} else if udp {
@@ -71,7 +71,7 @@ func (t *Tunnel) handleSSHChannel(ch ssh.NewChannel) {
 	if err != nil && !strings.HasSuffix(err.Error(), "EOF") {
 		errmsg = fmt.Sprintf(" (error %s)", err)
 	}
-	l.Debugf("Close %s%s", t.connStats.String(), errmsg)
+	l.Debugf("close %s%s", t.connStats.String(), errmsg)
 }
 
 func (t *Tunnel) handleSocks(src io.ReadWriteCloser) error {

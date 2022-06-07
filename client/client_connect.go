@@ -35,7 +35,7 @@ func (c *Client) connectionLoop(ctx context.Context) error {
 		}
 		//show error message and attempt counts (excluding disconnects)
 		if err != nil && err != io.EOF {
-			msg := fmt.Sprintf("Connection error: %s", err)
+			msg := fmt.Sprintf("connection error: %s", err)
 			if attempt > 0 {
 				maxAttemptVal := fmt.Sprint(maxAttempt)
 				if maxAttempt < 0 {
@@ -51,12 +51,12 @@ func (c *Client) connectionLoop(ctx context.Context) error {
 			break
 		}
 		d := b.Duration()
-		c.Infof("Retrying in %s...", d)
+		c.Infof("retrying in %s...", d)
 		select {
 		case <-cos.AfterSignal(d):
 			continue //retry now
 		case <-ctx.Done():
-			c.Infof("Cancelled")
+			c.Infof("cancelled")
 			return nil
 		}
 	}
@@ -95,12 +95,12 @@ func (c *Client) connectionOnce(ctx context.Context) (connected bool, err error)
 	}
 	conn := cnet.NewWebSocketConn(wsConn)
 	// perform SSH handshake on net.Conn
-	c.Debugf("Handshaking...")
+	c.Debugf("handshaking...")
 	sshConn, chans, reqs, err := ssh.NewClientConn(conn, "", c.sshConfig)
 	if err != nil {
 		e := err.Error()
 		if strings.Contains(e, "unable to authenticate") {
-			c.Infof("Authentication failed")
+			c.Infof("authentication failed")
 			c.Debugf(e)
 		} else {
 			c.Infof(e)
@@ -110,7 +110,7 @@ func (c *Client) connectionOnce(ctx context.Context) (connected bool, err error)
 	defer sshConn.Close()
 	// penguin client handshake (reverse of server handshake)
 	// send configuration
-	c.Debugf("Sending config")
+	c.Debugf("sending config")
 	t0 := time.Now()
 	_, configerr, err := sshConn.SendRequest(
 		"config",
@@ -124,7 +124,7 @@ func (c *Client) connectionOnce(ctx context.Context) (connected bool, err error)
 	if len(configerr) > 0 {
 		return false, errors.New(string(configerr))
 	}
-	c.Infof("Connected (Latency %s)", time.Since(t0))
+	c.Infof("connected (Latency %s)", time.Since(t0))
 	//connected, handover ssh connection for tunnel to use, and block
 	err = c.tunnel.BindSSH(ctx, sshConn, reqs, chans)
 	c.Infof("Disconnected")
