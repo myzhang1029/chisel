@@ -1,7 +1,7 @@
 
 ### Performance
 
-With [crowbar](https://github.com/q3k/crowbar), a connection is tunneled by repeatedly querying the server with updates. This results in a large amount of HTTP and TCP connection overhead. Chisel overcomes this using WebSockets combined with [crypto/ssh](https://golang.org/x/crypto/ssh) to create hundreds of logical connections, resulting in **one** TCP connection per client.
+With [crowbar](https://github.com/q3k/crowbar), a connection is tunneled by repeatedly querying the server with updates. This results in a large amount of HTTP and TCP connection overhead. Penguin overcomes this using WebSockets combined with [crypto/ssh](https://golang.org/x/crypto/ssh) to create hundreds of logical connections, resulting in **one** TCP connection per client.
 
 In this simple benchmark, we have:
 

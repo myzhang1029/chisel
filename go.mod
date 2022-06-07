@@ -1,4 +1,4 @@
-module github.com/jpillora/chisel
+module github.com/myzhang1029/penguin
 
 go 1.13
 

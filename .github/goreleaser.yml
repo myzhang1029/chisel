@@ -1,11 +1,11 @@
 # test this goreleaser config with:
-# - cd chisel
+# - cd penguin
 # - goreleaser --skip-publish --rm-dist --config .github/goreleaser.yml
 builds:
   - env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/jpillora/chisel/share.BuildVersion={{.Version}}
+      - -s -w -X github.com/myzhang1029/penguin/share.BuildVersion={{.Version}}
     flags:
       - -trimpath
     goos:

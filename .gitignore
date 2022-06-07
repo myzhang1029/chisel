@@ -1,7 +1,7 @@
 dist/
 *.swp
 .idea/
-chisel
+penguin
 bin/
 release/
 tmp/

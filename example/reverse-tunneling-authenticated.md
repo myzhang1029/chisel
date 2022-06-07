@@ -4,7 +4,7 @@
 
 This guide will show you how to use an internet-facing server (for example, a cloud VPS) as a relay to bounce down TCP traffic on port 80 to your Raspberry Pi.
 
-## Chisel CLI
+## Penguin CLI
 
 ### Server
 
@@ -13,8 +13,8 @@ Setup a relay server on the VPS to bounce down TCP traffic on port 80:
 ```bash
 #!/bin/bash
 
-# ⬇️ Start Chisel server in Reverse mode
-chisel server --reverse \
+# ⬇️ Start Penguin server in Reverse mode
+penguin server --reverse \
 
 # ⬇️ Use the include users.json as an authfile
 --authfile="./users.json" \
@@ -30,17 +30,17 @@ The corresponding `authfile` might look like this:
 
 ### Client
 
-Setup a chisel client to receive bounced-down traffic and forward it to the webserver running on the Pi:
+Setup a penguin client to receive bounced-down traffic and forward it to the webserver running on the Pi:
 
 ```bash
 #!/bin/bash
 
-chisel client \
+penguin client \
 
 # ⬇️ Authenticates user "foo" with password "bar"
 --auth="foo:bar" \
 
-# ⬇️ Connects to chisel relay server example.com
+# ⬇️ Connects to penguin relay server example.com
 # listening on the default ("fallback") port, 8080
 example.com \
 
@@ -51,7 +51,7 @@ R:80:localhost:80
 
 ---
 
-## Chisel Container
+## Penguin Container
 
 This guide makes use of Docker and Docker compose to accomplish the same task as the above guide.
 ### Server
@@ -62,10 +62,10 @@ Setup a relay server on the VPS to bounce down TCP traffic on port 80:
 version: '3'
 
 services:
-  chisel:
-    image: jpillora/chisel
+  penguin:
+    image: myzhang1029/penguin
     restart: unless-stopped
-    container_name: chisel
+    container_name: penguin
     # ⬇️ Pass CLI arguments one at a time in an array, as required by Docker compose.
     command:
       - 'server'
@@ -89,26 +89,26 @@ The `authfile` (`users.json`) remains the same as in the non-containerized versi
 
 ### Client
 
-Setup an instance of the Chisel client on the Pi to receive relayed TCP traffic and feed it to the web server:
+Setup an instance of the Penguin client on the Pi to receive relayed TCP traffic and feed it to the web server:
 
 ```yaml
 version: '3'
 
 services:
-  chisel:
-    # ⬇️ Delay starting Chisel server until the web server container is started.
+  penguin:
+    # ⬇️ Delay starting Penguin server until the web server container is started.
     depends_on:
       - webserver
-    image: jpillora/chisel
+    image: myzhang1029/penguin
     restart: unless-stopped
-    container_name: 'chisel'
+    container_name: 'penguin'
     command:
       - 'client'
-      # ⬇️ Use username `foo` and password `bar` to authenticate with Chisel server.
+      # ⬇️ Use username `foo` and password `bar` to authenticate with Penguin server.
       - '--auth=foo:bar'
-      # ⬇️ Domain & port of Chisel server. Port defaults to 8080 on server, but must be manually set on client.
+      # ⬇️ Domain & port of Penguin server. Port defaults to 8080 on server, but must be manually set on client.
       - 'proxy.example.com:8080'
-      # ⬇️ Reverse tunnel traffic from the chisel server to the web server container, identified in Docker using DNS by its service name `webserver`.
+      # ⬇️ Reverse tunnel traffic from the penguin server to the web server container, identified in Docker using DNS by its service name `webserver`.
       - 'R:80:webserver:80'
     networks:
       - internal

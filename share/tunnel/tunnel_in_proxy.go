@@ -6,9 +6,9 @@ import (
 	"net"
 	"sync"
 
-	"github.com/jpillora/chisel/share/cio"
-	"github.com/jpillora/chisel/share/settings"
 	"github.com/jpillora/sizestr"
+	"github.com/myzhang1029/penguin/share/cio"
+	"github.com/myzhang1029/penguin/share/settings"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -138,7 +138,7 @@ func (p *Proxy) pipeRemote(ctx context.Context, src io.ReadWriteCloser) {
 		return
 	}
 	//ssh request for tcp connection for this proxy's remote
-	dst, reqs, err := sshConn.OpenChannel("chisel", []byte(p.remote.Remote()))
+	dst, reqs, err := sshConn.OpenChannel("penguin", []byte(p.remote.Remote()))
 	if err != nil {
 		l.Infof("Stream error: %s", err)
 		return

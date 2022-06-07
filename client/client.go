@@ -17,12 +17,12 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	chshare "github.com/jpillora/chisel/share"
-	"github.com/jpillora/chisel/share/ccrypto"
-	"github.com/jpillora/chisel/share/cio"
-	"github.com/jpillora/chisel/share/cnet"
-	"github.com/jpillora/chisel/share/settings"
-	"github.com/jpillora/chisel/share/tunnel"
+	chshare "github.com/myzhang1029/penguin/share"
+	"github.com/myzhang1029/penguin/share/ccrypto"
+	"github.com/myzhang1029/penguin/share/cio"
+	"github.com/myzhang1029/penguin/share/cnet"
+	"github.com/myzhang1029/penguin/share/settings"
+	"github.com/myzhang1029/penguin/share/tunnel"
 
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/net/proxy"
@@ -247,7 +247,7 @@ func (c *Client) Start(ctx context.Context) error {
 		via = " via " + c.proxyURL.String()
 	}
 	c.Infof("Connecting to %s%s\n", c.server, via)
-	//connect to chisel server
+	//connect to penguin server
 	eg.Go(func() error {
 		return c.connectionLoop(ctx)
 	})

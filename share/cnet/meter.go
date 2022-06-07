@@ -6,8 +6,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/jpillora/chisel/share/cio"
 	"github.com/jpillora/sizestr"
+	"github.com/myzhang1029/penguin/share/cio"
 )
 
 //NewMeter to measure readers/writers

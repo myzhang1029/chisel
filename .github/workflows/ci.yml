@@ -60,13 +60,13 @@ jobs:
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: jpillora/chisel
+          images: myzhang1029/penguin
           tag-latest: true
           # Outputs:
-          # jpillora/chisel:1.2.3
-          # jpillora/chisel:1.2
-          # jpillora/chisel:1
-          # jpillora/chisel:latest
+          # myzhang1029/penguin:1.2.3
+          # myzhang1029/penguin:1.2
+          # myzhang1029/penguin:1
+          # myzhang1029/penguin:latest
           tag-semver: |
             {{version}}
             {{major}}.{{minor}}
