@@ -151,7 +151,7 @@ var serverHelp = `
 
     --ws-psk, An optional Pre-Shared Key for WebSocket upgrade. If this
     option is supplied but the client does not present the correct key
-    in the HTTP header X-Chisel-PDK, the upgrade to WebSocket silently fails.
+    in the HTTP header X-Penguin-PDK, the upgrade to WebSocket silently fails.
 
     --tls-key, Enables TLS and provides optional path to a PEM-encoded
     TLS private key. When this flag is set, you must also set --tls-cert,
@@ -190,7 +190,7 @@ func server(args []string) {
 	flags.BoolVar(&config.Reverse, "reverse", false, "")
 	flags.BoolVar(&config.Obfs, "obfs", false, "")
 	flags.StringVar(&config.Resp404, "404-resp", "Not found", "")
-	flags.StringVar(&config.PSK, "ws-psk", "", "")
+	flags.StringVar(&config.Psk, "ws-psk", "", "")
 	flags.StringVar(&config.TLS.Key, "tls-key", "", "")
 	flags.StringVar(&config.TLS.Cert, "tls-cert", "", "")
 	flags.Var(multiFlag{&config.TLS.Domains}, "tls-domain", "")
@@ -357,7 +357,7 @@ var clientHelp = `
     AUTH environment variable.
 
     --ws-psk, An optional Pre-Shared Key for WebSocket upgrade to present
-    to the server in the HTTP header X-Chisel-PSK. If the server requires
+    to the server in the HTTP header X-Penguin-Psk. If the server requires
     this key but the client does not present the correct key, the upgrade
     to WebSocket silently fails.
 
@@ -443,9 +443,9 @@ func client(args []string) {
 	if config.Auth == "" {
 		config.Auth = os.Getenv("AUTH")
 	}
-	//set X-Chisel-PSK to the supplied PSK
+	//set X-Penguin-Psk to the supplied PSK
 	if *psk != "" {
-		config.Headers.Set("X-Chisel-PSK", *psk)
+		config.Headers.Set("X-Penguin-Psk", *psk)
 	}
 	//move hostname onto headers
 	if *hostname != "" {

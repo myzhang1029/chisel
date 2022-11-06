@@ -19,9 +19,9 @@ func (s *Server) handleClientHandler(w http.ResponseWriter, r *http.Request) {
 	//websockets upgrade AND has penguin prefix
 	upgrade := strings.ToLower(r.Header.Get("Upgrade"))
 	protocol := r.Header.Get("Sec-WebSocket-Protocol")
-	wsPSK := r.Header.Get("X-Penguin-PSK")
+	wsPsk := r.Header.Get("X-Penguin-Psk")
 	if upgrade == "websocket" && strings.HasPrefix(protocol, "penguin-") {
-		if s.config.PSK == "" || wsPSK == s.config.PSK {
+		if s.config.Psk == "" || wsPsk == s.config.Psk {
 			if protocol == chshare.ProtocolVersion {
 				s.handleWebsocket(w, r)
 				return
@@ -31,7 +31,7 @@ func (s *Server) handleClientHandler(w http.ResponseWriter, r *http.Request) {
 				protocol, chshare.ProtocolVersion)
 		} else {
 			s.Infof("ignoring client connection with incorrect or missing PSK '%s'",
-				wsPSK)
+				wsPsk)
 		}
 	}
 	//proxy target was provided

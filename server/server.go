@@ -25,7 +25,7 @@ type Config struct {
 	KeySeed   string
 	AuthFile  string
 	Auth      string
-	PSK       string
+	Psk       string
 	Proxy     string
 	Resp404   string
 	Socks5    bool

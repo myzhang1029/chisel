@@ -132,7 +132,7 @@ $ penguin server --help
 
     --ws-psk, An optional Pre-Shared Key for WebSocket upgrade. If this
     option is supplied but the client does not present the correct key
-    in the HTTP header X-Chisel-PDK, the upgrade to WebSocket silently fails.
+    in the HTTP header X-Penguin-Psk, the upgrade to WebSocket silently fails.
 
     --tls-key, Enables TLS and provides optional path to a PEM-encoded
     TLS private key. When this flag is set, you must also set --tls-cert,
@@ -254,7 +254,7 @@ $ penguin client --help
     AUTH environment variable.
 
     --ws-psk, An optional Pre-Shared Key for WebSocket upgrade to present
-    to the server in the HTTP header X-Chisel-PSK. If the server requires
+    to the server in the HTTP header X-Penguin-Psk. If the server requires
     this key but the client does not present the correct key, the upgrade
     to WebSocket silently fails.
 
